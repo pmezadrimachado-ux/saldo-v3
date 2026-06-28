@@ -1,20 +1,20 @@
-# Saldo v3.0.0 RC8
+# Saldo v3.0.0 RC9
 
 ## Objetivo
 
-Corrigir o onboarding personalizado e o erro de gravação no IndexedDB.
+Corrigir o comportamento do botão Adicionar no onboarding.
 
-## Correções
+## Correção
 
-- Botão Adicionar para conta personalizada.
-- Botão Adicionar para categoria de despesa personalizada.
-- Botão Adicionar para categoria de receita personalizada.
-- Itens personalizados aparecem como chips antes de finalizar.
-- Registros singleton do IndexedDB agora recebem `id` automaticamente quando necessário.
+- O botão Adicionar não chama mais toast global.
+- O toast global causava re-render e apagava o chip recém-criado.
+- O item personalizado agora aparece como chip visível.
+- O chip pode ser removido antes de finalizar.
 
 ## Critério de aprovação
 
-- Adicionar categoria personalizada.
-- Finalizar onboarding.
-- Redirecionar para Lançar.
-- Categorias novas aparecerem no app.
+- Digitar uma categoria personalizada.
+- Clicar em Adicionar.
+- Ver o chip aparecer abaixo do campo.
+- Finalizar configuração.
+- Categoria aparecer no app.

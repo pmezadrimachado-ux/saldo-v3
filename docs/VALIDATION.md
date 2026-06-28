@@ -1,3 +1,3 @@
-# Validação — RC8 / Onboarding personalizado
+# Validação — RC9 / Chips de Onboarding
 
-Manifest, imports, exports, Service Worker, sintaxe JS, botões Adicionar e normalização do IndexedDB foram validados com sucesso.
+Manifest, imports, exports, Service Worker, sintaxe JS e chips persistentes foram validados com sucesso.

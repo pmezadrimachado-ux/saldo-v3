@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## 3.0.0-rc.9
+
+### Corrigido
+
+- Item personalizado sumia após clicar em Adicionar no onboarding.
+
+### Adicionado
+
+- Feedback inline no onboarding.
+- Chips personalizados removíveis.
+
+
 ## 3.0.0-rc.8
 
 ### Corrigido

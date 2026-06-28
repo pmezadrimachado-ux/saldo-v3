@@ -543,10 +543,7 @@ function bindOnboardingForm(rootElement, state, router, render) {
       const value = String(input?.value ?? '').trim();
 
       if (!value) {
-        showToast(state, render, {
-          type: 'error',
-          message: 'Digite um nome antes de adicionar.',
-        });
+        showInlineCustomFeedback(form, targetName, 'Digite um nome antes de adicionar.', 'error');
         return;
       }
 
@@ -555,10 +552,7 @@ function bindOnboardingForm(rootElement, state, router, render) {
         .some((item) => String(item.value).toLowerCase() === value.toLowerCase());
 
       if (alreadyExists) {
-        showToast(state, render, {
-          type: 'error',
-          message: 'Esse item já foi adicionado.',
-        });
+        showInlineCustomFeedback(form, targetName, 'Esse item já foi adicionado.', 'error');
         return;
       }
 
@@ -568,12 +562,17 @@ function bindOnboardingForm(rootElement, state, router, render) {
       });
 
       input.value = '';
-
-      showToast(state, render, {
-        type: 'success',
-        message: 'Item adicionado.',
-      });
+      showInlineCustomFeedback(form, targetName, 'Item adicionado.', 'success');
+      input.focus();
     });
+  });
+
+  form.addEventListener('click', (event) => {
+    const removeButton = event.target.closest('[data-remove-custom]');
+
+    if (!removeButton) return;
+
+    removeButton.closest('.custom-added-chip')?.remove();
   });
 
   form.addEventListener('submit', async (event) => {
@@ -682,8 +681,30 @@ function addCustomChoice(form, { targetName, value }) {
       <input id="${id}" type="checkbox" name="${targetName}" value="${value}" checked />
       <span>${value}</span>
       <small>adicionado</small>
+      <button type="button" aria-label="Remover ${value}" data-remove-custom>×</button>
     </label>
   `);
+}
+
+function showInlineCustomFeedback(form, targetName, message, type = 'success') {
+  const list = form.querySelector(`[data-custom-list="${targetName}"]`);
+
+  if (!list) return;
+
+  let feedback = list.querySelector('[data-custom-feedback]');
+
+  if (!feedback) {
+    feedback = document.createElement('p');
+    feedback.dataset.customFeedback = 'true';
+    list.prepend(feedback);
+  }
+
+  feedback.className = `custom-added-feedback custom-added-feedback--${type}`;
+  feedback.textContent = message;
+
+  window.setTimeout(() => {
+    feedback?.remove();
+  }, 1600);
 }
 
 function getSuggestedAccountType(name) {

@@ -1467,3 +1467,33 @@
     margin-bottom: 0;
   }
 }
+
+
+.custom-added-chip button {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.10);
+  color: var(--color-text-primary);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.custom-added-feedback {
+  width: 100%;
+  margin: 0 0 var(--space-1);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-black);
+}
+
+.custom-added-feedback--success {
+  color: var(--color-primary);
+}
+
+.custom-added-feedback--error {
+  color: var(--color-danger);
+}
