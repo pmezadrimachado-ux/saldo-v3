@@ -1,3 +1,3 @@
-# Validação — RC13 / Gráficos e seletor de conta
+# Validação — RC14 / Refatoração controlada
 
-Manifest, imports, exports, Service Worker, sintaxe JS, valores nos gráficos e seletor de conta foram validados com sucesso.
+Manifest, imports, exports, Service Worker, sintaxe JS, gráficos e seletor visual foram validados com sucesso.

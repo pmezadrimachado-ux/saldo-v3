@@ -2,7 +2,7 @@ import { renderCard } from '../components/base/card.component.js';
 import { renderCurrencyInput } from '../components/forms/currency-input.component.js';
 import { renderTextInput } from '../components/forms/text-input.component.js';
 import { renderTransactionList } from '../components/finance/transaction-list.component.js';
-import { renderAccountIconSelector } from '../components/finance/account-icon-selector.component.js';
+import { renderAccountChoiceGrid } from '../components/finance/account-choice-grid.component.js';
 import { uniqueAccounts, uniqueCategories } from '../../utils/dedupe.js';
 import { getTodayInputValue } from '../../utils/date.js';
 
@@ -36,8 +36,8 @@ export function renderTransactionsPage({ state }) {
 
             <div class="field">
               <span class="field__label">Conta ou cartão</span>
-              ${renderAccountIconSelector(accounts, accounts[0]?.id)}
-              <select class="input input--visually-linked" name="accountId" required>
+              ${renderAccountChoiceGrid(accounts)}
+              <select class="input input--account-fallback" name="accountId" required>
                 ${accounts.map((account) => `<option value="${account.id}">${account.name}</option>`).join('')}
               </select>
             </div>
