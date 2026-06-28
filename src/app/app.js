@@ -646,13 +646,15 @@ function bindOnboardingForm(rootElement, state, router, render) {
       });
 
       await refreshAppData(state);
+      state.onboarding.completed = true;
 
       showToast(state, render, {
         type: 'success',
         message: 'Configuração concluída.',
       });
 
-      router.navigate(ROUTES.QUICK_ADD, { replace: true });
+      window.location.hash = ROUTES.QUICK_ADD;
+      render();
     } catch (error) {
       console.error('Erro no onboarding:', error);
 

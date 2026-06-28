@@ -34,7 +34,7 @@ http://localhost:8000
 
 ## Release Candidate
 
-Versão atual: `3.0.0-rc.9`
+Versão atual: `3.0.0-rc.10`
 
 Antes de promover para Stable, execute:
 

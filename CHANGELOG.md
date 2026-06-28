@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 3.0.0-rc.10
+
+### Corrigido
+
+- App ficava preso na tela de onboarding após finalizar configuração.
+- Redirecionamento pós-onboarding para Lançar.
+
+
 ## 3.0.0-rc.9
 
 ### Corrigido

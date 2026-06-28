@@ -1,3 +1,3 @@
-# Validação — RC9 / Chips de Onboarding
+# Validação — RC10 / Redirecionamento Onboarding
 
-Manifest, imports, exports, Service Worker, sintaxe JS e chips persistentes foram validados com sucesso.
+Manifest, imports, exports, Service Worker, sintaxe JS e redirecionamento pós-onboarding foram validados com sucesso.

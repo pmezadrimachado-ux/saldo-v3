@@ -1,20 +1,19 @@
-# Saldo v3.0.0 RC9
+# Saldo v3.0.0 RC10
 
 ## Objetivo
 
-Corrigir o comportamento do botão Adicionar no onboarding.
+Corrigir o redirecionamento após finalizar o onboarding.
 
 ## Correção
 
-- O botão Adicionar não chama mais toast global.
-- O toast global causava re-render e apagava o chip recém-criado.
-- O item personalizado agora aparece como chip visível.
-- O chip pode ser removido antes de finalizar.
+- Após concluir a configuração, `state.onboarding.completed` é forçado para `true`.
+- O app muda diretamente para `#/quick-add`.
+- A aplicação renderiza novamente após a navegação.
+- Mantém chips personalizados do RC9.
 
 ## Critério de aprovação
 
-- Digitar uma categoria personalizada.
-- Clicar em Adicionar.
-- Ver o chip aparecer abaixo do campo.
-- Finalizar configuração.
-- Categoria aparecer no app.
+- Finalizar onboarding.
+- Ver popup "Configuração concluída."
+- Sair automaticamente da tela de onboarding.
+- Entrar na tela Lançar.
