@@ -1,5 +1,5 @@
 export const DB_NAME = 'saldoDB';
-export const DB_VERSION = 7;
+export const DB_VERSION = 11;
 
 export const DB_STORES = {
   ACCOUNTS: 'accounts',

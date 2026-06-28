@@ -34,12 +34,18 @@ export function validateTransaction(transaction, { accounts = [], categories = [
     errors.push('Conta ou cartão não encontrado.');
   }
 
+  const category = categories.find((item) => item.id === transaction.categoryId);
+
+  if (transaction.type !== 'transfer' && categories.length && !category) {
+    errors.push('Categoria não encontrada.');
+  }
+
   if (
     transaction.type !== 'transfer'
-    && categories.length
-    && !categories.some((category) => category.id === transaction.categoryId)
+    && category
+    && category.type !== transaction.type
   ) {
-    errors.push('Categoria não encontrada.');
+    errors.push('A categoria selecionada não combina com o tipo do lançamento.');
   }
 
   return errors;

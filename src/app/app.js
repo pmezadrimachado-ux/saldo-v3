@@ -188,7 +188,8 @@ function bindBackupActions(rootElement, state, render) {
   rootElement.querySelector('[data-import-backup-form]')?.addEventListener('submit', async (event) => {
     event.preventDefault();
 
-    const file = event.currentTarget.backupFile.files[0];
+    const form = event.currentTarget;
+    const file = form.backupFile.files[0];
 
     if (!file) {
       showToast(state, render, { type: 'error', message: 'Selecione um arquivo de backup.' });
@@ -213,7 +214,8 @@ function bindInstallmentActions(rootElement, state, render) {
   rootElement.querySelector('[data-installment-form]')?.addEventListener('submit', async (event) => {
     event.preventDefault();
 
-    const data = Object.fromEntries(new FormData(event.currentTarget));
+    const form = event.currentTarget;
+    const data = Object.fromEntries(new FormData(form));
 
     try {
       await addInstallmentGroup({
@@ -222,7 +224,7 @@ function bindInstallmentActions(rootElement, state, render) {
         installmentCount: Number(data.installmentCount),
       });
 
-      event.currentTarget.reset();
+      form.reset();
       await refreshAppData(state);
       showToast(state, render, { type: 'success', message: 'Parcelas geradas.' });
     } catch (error) {
@@ -235,7 +237,8 @@ function bindGoalActions(rootElement, state, render) {
   rootElement.querySelector('[data-goal-form]')?.addEventListener('submit', async (event) => {
     event.preventDefault();
 
-    const data = Object.fromEntries(new FormData(event.currentTarget));
+    const form = event.currentTarget;
+    const data = Object.fromEntries(new FormData(form));
 
     try {
       await addGoal({
@@ -244,7 +247,7 @@ function bindGoalActions(rootElement, state, render) {
         currentAmount: parseCurrencyInput(data.currentAmount),
       });
 
-      event.currentTarget.reset();
+      form.reset();
       await refreshAppData(state);
       showToast(state, render, { type: 'success', message: 'Meta criada.' });
     } catch (error) {
@@ -301,7 +304,8 @@ function bindBudgetActions(rootElement, state, render) {
   rootElement.querySelector('[data-budget-form]')?.addEventListener('submit', async (event) => {
     event.preventDefault();
 
-    const data = Object.fromEntries(new FormData(event.currentTarget));
+    const form = event.currentTarget;
+    const data = Object.fromEntries(new FormData(form));
 
     try {
       await addBudget({
@@ -309,7 +313,7 @@ function bindBudgetActions(rootElement, state, render) {
         amount: parseCurrencyInput(data.amount),
       });
 
-      event.currentTarget.reset();
+      form.reset();
       await refreshAppData(state);
       showToast(state, render, { type: 'success', message: 'Orçamento salvo.' });
     } catch (error) {
@@ -319,10 +323,16 @@ function bindBudgetActions(rootElement, state, render) {
 }
 
 function bindTransactionActions(rootElement, state, render) {
+  rootElement.querySelectorAll('[data-filter-category-by-type]').forEach((form) => {
+    syncTransactionCategoryOptions(form);
+    form.elements.type?.addEventListener('change', () => syncTransactionCategoryOptions(form));
+  });
+
   rootElement.querySelector('[data-quick-add-form]')?.addEventListener('submit', async (event) => {
     event.preventDefault();
 
-    const data = Object.fromEntries(new FormData(event.currentTarget));
+    const form = event.currentTarget;
+    const data = Object.fromEntries(new FormData(form));
     const category = state.data.categories.find((item) => item.id === data.categoryId);
 
     try {
@@ -337,7 +347,7 @@ function bindTransactionActions(rootElement, state, render) {
         categories: state.data.categories,
       });
 
-      event.currentTarget.reset();
+      form.reset();
       await refreshAppData(state);
       showToast(state, render, { type: 'success', message: 'Despesa salva.' });
     } catch (error) {
@@ -348,7 +358,8 @@ function bindTransactionActions(rootElement, state, render) {
   rootElement.querySelector('[data-transaction-form]')?.addEventListener('submit', async (event) => {
     event.preventDefault();
 
-    const data = Object.fromEntries(new FormData(event.currentTarget));
+    const form = event.currentTarget;
+    const data = Object.fromEntries(new FormData(form));
 
     try {
       await addTransaction({
@@ -362,7 +373,7 @@ function bindTransactionActions(rootElement, state, render) {
         categories: state.data.categories,
       });
 
-      event.currentTarget.reset();
+      form.reset();
       await refreshAppData(state);
       showToast(state, render, { type: 'success', message: 'Lançamento salvo.' });
     } catch (error) {
@@ -408,15 +419,37 @@ function bindTransactionActions(rootElement, state, render) {
   });
 }
 
+
+function syncTransactionCategoryOptions(form) {
+  const type = form.elements.type?.value;
+  const categorySelect = form.elements.categoryId;
+
+  if (!type || !categorySelect) return;
+
+  const options = Array.from(categorySelect.options);
+  const compatibleOptions = options.filter((option) => option.dataset.categoryType === type);
+
+  options.forEach((option) => {
+    const isCompatible = option.dataset.categoryType === type;
+    option.hidden = !isCompatible;
+    option.disabled = !isCompatible;
+  });
+
+  if (!compatibleOptions.some((option) => option.value === categorySelect.value)) {
+    categorySelect.value = compatibleOptions[0]?.value ?? '';
+  }
+}
+
 function bindAccountActions(rootElement, state, render) {
   rootElement.querySelector('[data-account-form]')?.addEventListener('submit', async (event) => {
     event.preventDefault();
 
-    const data = Object.fromEntries(new FormData(event.currentTarget));
+    const form = event.currentTarget;
+    const data = Object.fromEntries(new FormData(form));
 
     try {
       await addAccount(data);
-      event.currentTarget.reset();
+      form.reset();
       await refreshAppData(state);
       showToast(state, render, { type: 'success', message: 'Conta criada.' });
     } catch (error) {
@@ -471,11 +504,12 @@ function bindCategoryActions(rootElement, state, render) {
   rootElement.querySelector('[data-category-form]')?.addEventListener('submit', async (event) => {
     event.preventDefault();
 
-    const data = Object.fromEntries(new FormData(event.currentTarget));
+    const form = event.currentTarget;
+    const data = Object.fromEntries(new FormData(form));
 
     try {
       await addCategory(data);
-      event.currentTarget.reset();
+      form.reset();
       await refreshAppData(state);
       showToast(state, render, { type: 'success', message: 'Categoria criada.' });
     } catch (error) {

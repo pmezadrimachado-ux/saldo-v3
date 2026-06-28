@@ -1,6 +1,11 @@
 import { EVENT_NAMES } from '../core/constants.js';
 import { createLogger } from '../core/logger.js';
 import { exportDatabaseSnapshot, openDatabase } from '../storage/indexed-db.adapter.js';
+import {
+  createInitialMetadata,
+  createInitialPreferences,
+  createInitialSettings,
+} from '../storage/db.seed.js';
 import { accountRepository } from '../repositories/account.repository.js';
 import { categoryRepository } from '../repositories/category.repository.js';
 import { transactionRepository } from '../repositories/transaction.repository.js';
@@ -15,6 +20,7 @@ const logger = createLogger('StorageService');
 
 export async function initializeStorage(eventBus) {
   await openDatabase();
+  await ensureCoreRecords();
 
   const data = await loadAppData();
 
@@ -27,7 +33,35 @@ export async function initializeStorage(eventBus) {
   return data;
 }
 
+export async function ensureCoreRecords() {
+  const [settings, preferences, metadata] = await Promise.all([
+    settingsRepository.getSettings(),
+    preferencesRepository.getPreferences(),
+    metadataRepository.getMetadata(),
+  ]);
+
+  const tasks = [];
+
+  if (!settings) {
+    tasks.push(settingsRepository.saveSettings(createInitialSettings()));
+  }
+
+  if (!preferences) {
+    tasks.push(preferencesRepository.savePreferences(createInitialPreferences()));
+  }
+
+  if (!metadata) {
+    tasks.push(metadataRepository.saveMetadata(createInitialMetadata()));
+  }
+
+  if (tasks.length) {
+    await Promise.all(tasks);
+  }
+}
+
 export async function loadAppData() {
+  await ensureCoreRecords();
+
   const [
     accounts,
     categories,
@@ -57,6 +91,7 @@ export async function loadAppData() {
     budgets,
     goals,
     installmentGroups,
+    recurrences: [],
     settings,
     preferences,
     metadata,

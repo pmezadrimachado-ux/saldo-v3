@@ -68,7 +68,15 @@ export function renderDashboardPage({ state }) {
       })}
 
       ${renderCard({ eyebrow: 'Histórico', title: 'Últimos lançamentos', content: renderTransactionList({ transactions: dashboard.recentTransactions, accounts: state.data.accounts, categories: state.data.categories }) })}
-      ${renderCard({ eyebrow: 'Visual semanal', title: 'Ritmo da semana', description: 'Gráfico placeholder até a Sprint 8 conectar dados por dia.', content: renderWeekBarChart({ values: [12, 28, 18, 34, 26, 44, 20] }) })}
+      ${renderCard({
+        eyebrow: 'Visual semanal',
+        title: 'Ritmo da semana',
+        description: 'Gastos reais por dia da semana no mês selecionado.',
+        content: renderWeekBarChart({
+          values: dashboard.weekExpensesByDay.map((item) => item.total),
+          labels: dashboard.weekExpensesByDay.map((item) => item.label.slice(0, 1)),
+        }),
+      })}
     </section>
   `;
 }

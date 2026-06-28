@@ -1,5 +1,22 @@
 # CHANGELOG
 
+## 3.0.0-rc.11
+
+### Corrigido
+
+- `form.reset()` após `await`.
+- IDs internos de settings/preferences/metadata.
+- Seed inicial do banco.
+- Rotas e renderers faltantes.
+- Compatibilidade entre tipo de lançamento e categoria.
+- Dashboard com gráfico semanal mockado.
+
+### Adicionado
+
+- Filtro dinâmico de categorias no lançamento completo.
+- Estado inicial com `installmentGroups` e `recurrences`.
+
+
 ## 3.0.0-rc.10
 
 ### Corrigido

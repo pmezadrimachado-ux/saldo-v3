@@ -18,7 +18,7 @@ export function renderTransactionsPage({ state }) {
         eyebrow: 'Lançamento completo',
         title: 'Novo lançamento',
         content: `
-          <form class="transaction-form" data-transaction-form>
+          <form class="transaction-form" data-transaction-form data-filter-category-by-type>
             <label class="field">
               <span class="field__label">Tipo</span>
               <select class="input" name="type" required>
@@ -42,7 +42,7 @@ export function renderTransactionsPage({ state }) {
             <label class="field">
               <span class="field__label">Categoria</span>
               <select class="input" name="categoryId" required>
-                ${categories.map((category) => `<option value="${category.id}">${category.name} (${category.type === 'income' ? 'Receita' : 'Despesa'})</option>`).join('')}
+                ${categories.map((category) => `<option value="${category.id}" data-category-type="${category.type}">${category.name} (${category.type === 'income' ? 'Receita' : 'Despesa'})</option>`).join('')}
               </select>
             </label>
 

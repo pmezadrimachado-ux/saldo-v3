@@ -27,6 +27,8 @@ export function createInitialState() {
       transactions: [],
       budgets: [],
       goals: [],
+      installmentGroups: [],
+      recurrences: [],
       settings: null,
       preferences: null,
       metadata: null,

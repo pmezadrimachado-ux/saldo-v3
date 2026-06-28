@@ -19,7 +19,22 @@ import { renderQuickAddPage } from '../pages/quick-add.page.js';
 import { renderSettingsPage } from '../pages/settings.page.js';
 import { renderTransactionsPage } from '../pages/transactions.page.js';
 const logger = createLogger('AppShell');
-const PAGE_RENDERERS = { [ROUTES.ONBOARDING]: renderOnboardingPage, [ROUTES.QUICK_ADD]: renderQuickAddPage, [ROUTES.DASHBOARD]: renderDashboardPage, [ROUTES.TRANSACTIONS]: renderTransactionsPage, [ROUTES.ANALYTICS]: renderAnalyticsPage, [ROUTES.SETTINGS]: renderSettingsPage, [ROUTES.ACCOUNTS]: renderAccountsPage, [ROUTES.CATEGORIES]: renderCategoriesPage, [ROUTES.BUDGETS]: renderBudgetsPage, [ROUTES.GOALS]: renderGoalsPage };
+const PAGE_RENDERERS = {
+  [ROUTES.ONBOARDING]: renderOnboardingPage,
+  [ROUTES.QUICK_ADD]: renderQuickAddPage,
+  [ROUTES.DASHBOARD]: renderDashboardPage,
+  [ROUTES.TRANSACTIONS]: renderTransactionsPage,
+  [ROUTES.ANALYTICS]: renderAnalyticsPage,
+  [ROUTES.SETTINGS]: renderSettingsPage,
+  [ROUTES.ACCOUNTS]: renderAccountsPage,
+  [ROUTES.CATEGORIES]: renderCategoriesPage,
+  [ROUTES.BUDGETS]: renderBudgetsPage,
+  [ROUTES.GOALS]: renderGoalsPage,
+  [ROUTES.INSTALLMENTS]: renderInstallmentsPage,
+  [ROUTES.BACKUP]: renderBackupPage,
+  [ROUTES.PWA]: renderPwaPage,
+  [ROUTES.TESTS]: renderTestsPage,
+};
 export function renderAppShell(rootElement, context) {
   const { state } = context;
   rootElement.innerHTML = `<div class="app-shell"><a class="skip-link" href="#main-content">Pular para o conteúdo</a><header class="app-header"><div><p class="app-header__eyebrow">${APP_CONFIG.version}</p><h1 class="app-header__title">${APP_CONFIG.name}</h1></div><div class="app-header__status">${state.app.isOffline ? 'Offline' : 'Online'}</div></header><main class="app-main" id="main-content" tabindex="-1">${renderCurrentPageSafely(context)}</main>${renderBottomNavigation(state)}${renderToast(state.ui.toast)}</div>`;

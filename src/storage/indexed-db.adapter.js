@@ -161,15 +161,15 @@ function normalizeRecordForStore(storeName, record) {
   }
 
   if (storeName === DB_STORES.SETTINGS) {
-    return { ...record, id: 'app-settings' };
+    return { ...record, id: 'app_settings' };
   }
 
   if (storeName === DB_STORES.PREFERENCES) {
-    return { ...record, id: 'user-preferences' };
+    return { ...record, id: 'user_preferences' };
   }
 
   if (storeName === DB_STORES.METADATA) {
-    return { ...record, id: 'app-metadata' };
+    return { ...record, id: 'app_metadata' };
   }
 
   return record;
