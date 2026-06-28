@@ -160,6 +160,7 @@ function bindGlobalEvents(rootElement, { state, router, render }) {
   bindAccountActions(rootElement, state, render);
   bindCategoryActions(rootElement, state, render);
   bindTransactionActions(rootElement, state, render);
+  bindAccountIconSelectors(rootElement);
   bindBudgetActions(rootElement, state, render);
   bindGoalActions(rootElement, state, render);
   bindInstallmentActions(rootElement, state, render);
@@ -420,6 +421,38 @@ function bindTransactionActions(rootElement, state, render) {
   });
 }
 
+
+
+function bindAccountIconSelectors(rootElement) {
+  rootElement.querySelectorAll('[data-account-icon-selector]').forEach((selector) => {
+    const form = selector.closest('form');
+    const accountSelect = form?.elements?.accountId;
+
+    if (!accountSelect) return;
+
+    const sync = (selectedId) => {
+      selector.querySelectorAll('[data-account-choice]').forEach((button) => {
+        const isSelected = button.dataset.accountChoice === selectedId;
+        button.classList.toggle('is-selected', isSelected);
+        button.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
+      });
+    };
+
+    sync(accountSelect.value);
+
+    selector.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-account-choice]');
+
+      if (!button) return;
+
+      accountSelect.value = button.dataset.accountChoice;
+      accountSelect.dispatchEvent(new Event('change', { bubbles: true }));
+      sync(accountSelect.value);
+    });
+
+    accountSelect.addEventListener('change', () => sync(accountSelect.value));
+  });
+}
 
 function syncTransactionCategoryOptions(form) {
   const type = form.elements.type?.value;

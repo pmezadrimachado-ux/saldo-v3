@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 3.0.0-rc.13
+
+### Adicionado
+
+- Valores em R$ nos gráficos de semana e últimos meses.
+- Totais nos gráficos.
+- Seletor visual de conta/cartão no lançamento completo.
+
+
 ## 3.0.0-rc.12
 
 ### Corrigido

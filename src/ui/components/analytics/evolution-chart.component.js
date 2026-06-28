@@ -2,27 +2,34 @@ import { formatCurrency } from '../../../utils/currency.js';
 
 export function renderEvolutionChart(items = []) {
   if (!items.length) {
-    return `<p class="card__description">Ainda não há histórico mensal suficiente.</p>`;
+    return `<p class="card__description">Sem dados suficientes para evolução.</p>`;
   }
 
-  const max = Math.max(...items.flatMap((item) => [item.income, item.expense]).map(Number), 1);
+  const maxValue = Math.max(...items.map((item) => Math.max(Number(item.income || 0), Number(item.expenses || 0))), 1);
+  const totalExpenses = items.reduce((sum, item) => sum + Number(item.expenses || 0), 0);
 
   return `
-    <div class="evolution-chart-v3">
-      ${items.map((item) => {
-        const incomeHeight = Math.max(6, Math.round((Number(item.income) / max) * 100));
-        const expenseHeight = Math.max(6, Math.round((Number(item.expense) / max) * 100));
+    <div class="evolution-chart evolution-chart--with-values">
+      <div class="evolution-chart__plot">
+        ${items.map((item) => {
+          const incomeHeight = Number(item.income || 0) > 0 ? Math.max(6, Math.round((Number(item.income || 0) / maxValue) * 100)) : 4;
+          const expenseHeight = Number(item.expenses || 0) > 0 ? Math.max(6, Math.round((Number(item.expenses || 0) / maxValue) * 100)) : 4;
 
-        return `
-          <div class="evolution-chart-v3__item">
-            <div class="evolution-chart-v3__bars" title="Receitas ${formatCurrency(item.income)} • Despesas ${formatCurrency(item.expense)}">
-              <span class="evolution-chart-v3__bar evolution-chart-v3__bar--income" style="height:${incomeHeight}%"></span>
-              <span class="evolution-chart-v3__bar evolution-chart-v3__bar--expense" style="height:${expenseHeight}%"></span>
+          return `
+            <div class="evolution-chart__item">
+              <strong class="evolution-chart__value">${formatCurrency(item.expenses || 0)}</strong>
+              <div class="evolution-chart__bars">
+                <span class="evolution-chart__bar evolution-chart__bar--income" style="height:${incomeHeight}%"></span>
+                <span class="evolution-chart__bar evolution-chart__bar--expense" style="height:${expenseHeight}%"></span>
+              </div>
+              <small>${String(item.monthKey ?? '').slice(5) || '-'}</small>
             </div>
-            <small>${item.monthKey.slice(5)}</small>
-          </div>
-        `;
-      }).join('')}
+          `;
+        }).join('')}
+      </div>
+      <p class="evolution-chart__total">
+        Total de despesas no período: <strong>${formatCurrency(totalExpenses)}</strong>
+      </p>
     </div>
   `;
 }
