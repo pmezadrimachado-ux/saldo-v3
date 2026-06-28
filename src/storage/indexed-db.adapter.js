@@ -139,15 +139,40 @@ export async function getByIndex(storeName, indexName, value) {
 
 export async function put(storeName, record) {
   const database = await openDatabase();
+  const normalizedRecord = normalizeRecordForStore(storeName, record);
 
   return new Promise((resolve, reject) => {
     const transaction = database.transaction(storeName, 'readwrite');
     const store = transaction.objectStore(storeName);
-    const request = store.put(record);
+    const request = store.put(normalizedRecord);
 
-    request.onsuccess = () => resolve(record);
+    request.onsuccess = () => resolve(normalizedRecord);
     request.onerror = () => reject(request.error);
   });
+}
+
+function normalizeRecordForStore(storeName, record) {
+  if (!record || typeof record !== 'object') {
+    return record;
+  }
+
+  if (record.id) {
+    return record;
+  }
+
+  if (storeName === DB_STORES.SETTINGS) {
+    return { ...record, id: 'app-settings' };
+  }
+
+  if (storeName === DB_STORES.PREFERENCES) {
+    return { ...record, id: 'user-preferences' };
+  }
+
+  if (storeName === DB_STORES.METADATA) {
+    return { ...record, id: 'app-metadata' };
+  }
+
+  return record;
 }
 
 export async function remove(storeName, id) {

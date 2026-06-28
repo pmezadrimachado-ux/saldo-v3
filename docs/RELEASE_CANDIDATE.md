@@ -1,18 +1,20 @@
-# Saldo v3.0.0 RC7
+# Saldo v3.0.0 RC8
 
 ## Objetivo
 
-Corrigir falha real de IndexedDB encontrada no onboarding.
+Corrigir o onboarding personalizado e o erro de gravação no IndexedDB.
 
-## Correção
+## Correções
 
-- Migração defensiva do IndexedDB.
-- Criação automática de stores ausentes em upgrade.
-- Versão do banco elevada para forçar migração.
-- Preservação de dados existentes quando possível.
+- Botão Adicionar para conta personalizada.
+- Botão Adicionar para categoria de despesa personalizada.
+- Botão Adicionar para categoria de receita personalizada.
+- Itens personalizados aparecem como chips antes de finalizar.
+- Registros singleton do IndexedDB agora recebem `id` automaticamente quando necessário.
 
 ## Critério de aprovação
 
-- Abrir em navegador com banco antigo não deve quebrar.
-- Onboarding deve finalizar.
-- App deve redirecionar para Lançar.
+- Adicionar categoria personalizada.
+- Finalizar onboarding.
+- Redirecionar para Lançar.
+- Categorias novas aparecerem no app.

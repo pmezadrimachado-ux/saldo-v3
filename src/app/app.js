@@ -535,6 +535,47 @@ function bindOnboardingForm(rootElement, state, router, render) {
 
   form.dataset.bound = 'true';
 
+  form.querySelectorAll('[data-add-custom]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const targetName = button.dataset.addCustom;
+      const inputName = button.dataset.inputName;
+      const input = form.elements[inputName];
+      const value = String(input?.value ?? '').trim();
+
+      if (!value) {
+        showToast(state, render, {
+          type: 'error',
+          message: 'Digite um nome antes de adicionar.',
+        });
+        return;
+      }
+
+      const alreadyExists = Array
+        .from(form.querySelectorAll(`input[name="${targetName}"]`))
+        .some((item) => String(item.value).toLowerCase() === value.toLowerCase());
+
+      if (alreadyExists) {
+        showToast(state, render, {
+          type: 'error',
+          message: 'Esse item já foi adicionado.',
+        });
+        return;
+      }
+
+      addCustomChoice(form, {
+        targetName,
+        value,
+      });
+
+      input.value = '';
+
+      showToast(state, render, {
+        type: 'success',
+        message: 'Item adicionado.',
+      });
+    });
+  });
+
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
     event.stopPropagation();
@@ -627,6 +668,22 @@ function bindOnboardingForm(rootElement, state, router, render) {
       });
     }
   });
+}
+
+function addCustomChoice(form, { targetName, value }) {
+  const list = form.querySelector(`[data-custom-list="${targetName}"]`);
+
+  if (!list) return;
+
+  const id = `custom-${targetName}-${Date.now()}`;
+
+  list.insertAdjacentHTML('beforeend', `
+    <label class="custom-added-chip" for="${id}">
+      <input id="${id}" type="checkbox" name="${targetName}" value="${value}" checked />
+      <span>${value}</span>
+      <small>adicionado</small>
+    </label>
+  `);
 }
 
 function getSuggestedAccountType(name) {

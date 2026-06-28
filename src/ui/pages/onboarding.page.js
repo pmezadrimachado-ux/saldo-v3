@@ -27,11 +27,18 @@ export function renderOnboardingPage() {
             `).join('')}
           </div>
 
-          ${renderTextInput({
-            name: 'customAccount',
-            label: 'Conta personalizada opcional',
-            placeholder: 'Ex.: Banco do Brasil, Carteira, Alelo',
-          })}
+          <div class="custom-add-row">
+            ${renderTextInput({
+              name: 'customAccount',
+              label: 'Conta personalizada opcional',
+              placeholder: 'Ex.: Banco do Brasil, Carteira, Alelo',
+            })}
+            <button class="button button--secondary" type="button" data-add-custom="accounts" data-input-name="customAccount">
+              Adicionar
+            </button>
+          </div>
+
+          <div class="custom-added-list" data-custom-list="accounts"></div>
         </section>
 
         <section class="onboarding-step">
@@ -48,11 +55,18 @@ export function renderOnboardingPage() {
             `).join('')}
           </div>
 
-          ${renderTextInput({
-            name: 'customExpenseCategory',
-            label: 'Categoria de despesa personalizada opcional',
-            placeholder: 'Ex.: Academia, Pet, Delivery',
-          })}
+          <div class="custom-add-row">
+            ${renderTextInput({
+              name: 'customExpenseCategory',
+              label: 'Categoria de despesa personalizada opcional',
+              placeholder: 'Ex.: Academia, Pet, Delivery',
+            })}
+            <button class="button button--secondary" type="button" data-add-custom="expenseCategories" data-input-name="customExpenseCategory">
+              Adicionar
+            </button>
+          </div>
+
+          <div class="custom-added-list" data-custom-list="expenseCategories"></div>
         </section>
 
         <section class="onboarding-step">
@@ -69,11 +83,18 @@ export function renderOnboardingPage() {
             `).join('')}
           </div>
 
-          ${renderTextInput({
-            name: 'customIncomeCategory',
-            label: 'Categoria de receita personalizada opcional',
-            placeholder: 'Ex.: Bônus, Comissão, Venda',
-          })}
+          <div class="custom-add-row">
+            ${renderTextInput({
+              name: 'customIncomeCategory',
+              label: 'Categoria de receita personalizada opcional',
+              placeholder: 'Ex.: Bônus, Comissão, Venda',
+            })}
+            <button class="button button--secondary" type="button" data-add-custom="incomeCategories" data-input-name="customIncomeCategory">
+              Adicionar
+            </button>
+          </div>
+
+          <div class="custom-added-list" data-custom-list="incomeCategories"></div>
         </section>
 
         <button class="button button--primary button--lg" type="submit" data-onboarding-submit>
@@ -81,7 +102,7 @@ export function renderOnboardingPage() {
         </button>
 
         <p class="form-help">
-          Se o botão não avançar, abra o console e envie o erro exibido. Nesta versão, erros também aparecem em aviso no app.
+          Use o botão Adicionar para incluir contas e categorias personalizadas antes de finalizar.
         </p>
       </form>
     </section>

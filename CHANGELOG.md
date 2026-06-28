@@ -1,5 +1,20 @@
 # CHANGELOG
 
+## 3.0.0-rc.8
+
+### Corrigido
+
+- Erro de gravação em object stores com keyPath.
+- Onboarding de itens personalizados.
+
+### Adicionado
+
+- Botão Adicionar para conta personalizada.
+- Botão Adicionar para categoria de despesa personalizada.
+- Botão Adicionar para categoria de receita personalizada.
+- Chips visuais de itens personalizados.
+
+
 ## 3.0.0-rc.7
 
 ### Corrigido
