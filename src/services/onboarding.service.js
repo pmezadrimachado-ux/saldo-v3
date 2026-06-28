@@ -5,6 +5,7 @@ import { settingsRepository } from '../repositories/settings.repository.js';
 import { preferencesRepository } from '../repositories/preferences.repository.js';
 import { metadataRepository } from '../repositories/metadata.repository.js';
 import { createAccount } from '../domain/accounts/account.model.js';
+import { uniqueAccounts, uniqueCategories } from '../utils/dedupe.js';
 import { validateAccount } from '../domain/accounts/account.validators.js';
 import { createCategory } from '../domain/categories/category.model.js';
 import { validateCategory } from '../domain/categories/category.validators.js';
@@ -35,78 +36,28 @@ export const SUGGESTED_INCOME_CATEGORIES = [
   { name: 'Outros', type: 'income', color: '#6F7D86', icon: 'circle', sortOrder: 999 },
 ];
 
-export async function completeOnboarding(input) {
-  const now = new Date().toISOString();
+export async function completeOnboarding({
+  accounts = [],
+  categories = [],
+  theme = 'dark',
+} = {}) {
+  const safeAccounts = uniqueAccounts(accounts);
+  const safeCategories = uniqueCategories(categories);
 
-  const accounts = input.accounts.map((item) => createAccount(item, now));
-  const categories = input.categories.map((item) => createCategory(item, now));
-
-  const errors = [
-    ...validateOnboarding(accounts, categories),
-    ...accounts.flatMap(validateAccount),
-    ...categories.flatMap(validateCategory),
-  ];
-
-  if (errors.length) {
-    throw new Error(errors[0]);
-  }
-
-  await Promise.all(accounts.map((account) => accountRepository.save(account)));
-  await Promise.all(categories.map((category) => categoryRepository.save(category)));
+  await Promise.all(safeAccounts.map((account) => accountRepository.save(createAccount(account))));
+  await Promise.all(safeCategories.map((category) => categoryRepository.save(createCategory(category))));
 
   const settings = await settingsRepository.getSettings();
-  const preferences = await preferencesRepository.getPreferences();
-  const metadata = await metadataRepository.getMetadata();
-
-  const defaultExpenseCategory = categories.find((category) => category.type === 'expense');
-  const defaultAccount = accounts[0];
 
   await settingsRepository.saveSettings({
     ...settings,
-    currency: APP_CONFIG.currency,
-    locale: APP_CONFIG.locale,
-    theme: input.theme ?? 'dark',
-    defaultAccountId: defaultAccount.id,
-    defaultCategoryId: defaultExpenseCategory?.id ?? null,
     onboardingCompleted: true,
-    onboardingCompletedAt: now,
-    updatedAt: now,
-  });
-
-  await preferencesRepository.savePreferences({
-    ...preferences,
-    quickAddLastAccountId: defaultAccount.id,
-    quickAddLastCategoryId: defaultExpenseCategory?.id ?? null,
-    updatedAt: now,
-  });
-
-  await metadataRepository.saveMetadata({
-    ...metadata,
-    appVersion: APP_CONFIG.version,
-    lastOpenedAt: now,
-    updatedAt: now,
+    theme,
+    updatedAt: new Date().toISOString(),
   });
 
   return {
-    accounts,
-    categories,
+    accounts: safeAccounts,
+    categories: safeCategories,
   };
-}
-
-function validateOnboarding(accounts, categories) {
-  const errors = [];
-
-  if (!accounts.length) {
-    errors.push('Adicione pelo menos uma conta ou cartão.');
-  }
-
-  if (!categories.some((category) => category.type === 'expense')) {
-    errors.push('Selecione pelo menos uma categoria de despesa.');
-  }
-
-  if (!categories.some((category) => category.type === 'income')) {
-    errors.push('Selecione pelo menos uma categoria de receita.');
-  }
-
-  return errors;
 }

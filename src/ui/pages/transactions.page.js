@@ -2,11 +2,12 @@ import { renderCard } from '../components/base/card.component.js';
 import { renderCurrencyInput } from '../components/forms/currency-input.component.js';
 import { renderTextInput } from '../components/forms/text-input.component.js';
 import { renderTransactionList } from '../components/finance/transaction-list.component.js';
+import { uniqueAccounts, uniqueCategories } from '../../utils/dedupe.js';
 import { getTodayInputValue } from '../../utils/date.js';
 
 export function renderTransactionsPage({ state }) {
-  const accounts = state.data.accounts.filter((account) => account.isActive);
-  const categories = state.data.categories.filter((category) => category.isActive);
+  const accounts = uniqueAccounts(state.data.accounts).filter((account) => account.isActive);
+  const categories = uniqueCategories(state.data.categories).filter((category) => category.isActive);
 
   return `
     <section class="page page--placeholder">

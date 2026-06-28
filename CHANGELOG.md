@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## 3.0.0-rc.12
+
+### Corrigido
+
+- Categorias repetidas.
+- Contas repetidas.
+- Onboarding criando duplicatas em testes sucessivos.
+
+### Adicionado
+
+- Utilitário central de deduplicação.
+- Reparo automático de duplicatas no storage.
+
+
 ## 3.0.0-rc.11
 
 ### Corrigido

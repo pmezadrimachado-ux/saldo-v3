@@ -1,11 +1,12 @@
 import { renderButton } from '../components/base/button.component.js';
 import { renderCurrencyInput } from '../components/forms/currency-input.component.js';
+import { uniqueAccounts, uniqueCategories } from '../../utils/dedupe.js';
 import { renderChipSelector } from '../components/forms/chip-selector.component.js';
 import { renderTextInput } from '../components/forms/text-input.component.js';
 import { getTodayInputValue } from '../../utils/date.js';
 
 export function renderQuickAddPage({ state }) {
-  const accounts = state.data.accounts.filter((account) => account.isActive);
+  const accounts = uniqueAccounts(state.data.accounts).filter((account) => account.isActive);
   const categories = state.data.categories.filter((category) => category.isActive && category.type === 'expense');
 
   const selectedAccountId =

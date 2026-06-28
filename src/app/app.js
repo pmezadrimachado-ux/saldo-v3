@@ -13,6 +13,7 @@ import {
   setToast,
 } from '../core/state.js';
 import { parseCurrencyInput } from '../utils/currency.js';
+import { uniqueAccounts, uniqueCategories } from '../utils/dedupe.js';
 import { addBudget } from '../services/budget.service.js';
 import { addGoal, archiveGoal, reactivateGoal, updateGoal } from '../services/goal.service.js';
 import { addInstallmentGroup } from '../services/installment.service.js';
@@ -674,8 +675,8 @@ function bindOnboardingForm(rootElement, state, router, render) {
       }
 
       await completeOnboarding({
-        accounts,
-        categories,
+        accounts: uniqueAccounts(accounts),
+        categories: uniqueCategories(categories),
         theme: 'dark',
       });
 

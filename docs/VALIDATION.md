@@ -1,3 +1,3 @@
-# Validação — RC11 / Estabilização estrutural
+# Validação — RC12 / Deduplicação
 
-Manifest, imports, exports, Service Worker, sintaxe JS e correções estruturais foram validados com sucesso.
+Manifest, imports, exports, Service Worker, sintaxe JS e deduplicação foram validados com sucesso.

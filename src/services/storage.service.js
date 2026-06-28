@@ -15,12 +15,14 @@ import { installmentRepository } from '../repositories/installment.repository.js
 import { settingsRepository } from '../repositories/settings.repository.js';
 import { preferencesRepository } from '../repositories/preferences.repository.js';
 import { metadataRepository } from '../repositories/metadata.repository.js';
+import { uniqueAccounts, uniqueCategories, normalizeDedupeKey } from '../utils/dedupe.js';
 
 const logger = createLogger('StorageService');
 
 export async function initializeStorage(eventBus) {
   await openDatabase();
   await ensureCoreRecords();
+  await repairDuplicateCoreEntities();
 
   const data = await loadAppData();
 
@@ -59,6 +61,46 @@ export async function ensureCoreRecords() {
   }
 }
 
+
+export async function repairDuplicateCoreEntities() {
+  const [accounts, categories] = await Promise.all([
+    accountRepository.findAll(),
+    categoryRepository.findAll(),
+  ]);
+
+  await removeDuplicates({
+    items: accounts,
+    getKey: (account) => `${account.type}:${account.name}`,
+    removeById: (id) => accountRepository.removeById(id),
+  });
+
+  await removeDuplicates({
+    items: categories,
+    getKey: (category) => `${category.type}:${category.name}`,
+    removeById: (id) => categoryRepository.removeById(id),
+  });
+}
+
+async function removeDuplicates({ items, getKey, removeById }) {
+  const seen = new Set();
+  const duplicates = [];
+
+  items.forEach((item) => {
+    const key = normalizeDedupeKey(getKey(item));
+
+    if (!key) return;
+
+    if (seen.has(key)) {
+      duplicates.push(item);
+      return;
+    }
+
+    seen.add(key);
+  });
+
+  await Promise.all(duplicates.map((item) => removeById(item.id)));
+}
+
 export async function loadAppData() {
   await ensureCoreRecords();
 
@@ -85,8 +127,8 @@ export async function loadAppData() {
   ]);
 
   return {
-    accounts,
-    categories,
+    accounts: uniqueAccounts(accounts),
+    categories: uniqueCategories(categories),
     transactions,
     budgets,
     goals,
