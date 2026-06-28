@@ -1,19 +1,18 @@
-# Saldo v3.0.0 RC6
+# Saldo v3.0.0 RC7
 
 ## Objetivo
 
-Corrigir o bloqueio reportado no onboarding em ambiente real.
+Corrigir falha real de IndexedDB encontrada no onboarding.
 
-## Correções
+## Correção
 
-- Submit do onboarding reforçado.
-- Erro de onboarding agora é registrado no console.
-- Botão exibe estado de carregamento.
-- Campo de categoria de receita personalizada.
-- Redirecionamento para Lançar após configuração mantido.
+- Migração defensiva do IndexedDB.
+- Criação automática de stores ausentes em upgrade.
+- Versão do banco elevada para forçar migração.
+- Preservação de dados existentes quando possível.
 
 ## Critério de aprovação
 
-- Clicar em "Finalizar configuração" deve criar dados iniciais.
-- App deve redirecionar para `#/quick-add`.
-- Categoria de receita personalizada deve ser salva.
+- Abrir em navegador com banco antigo não deve quebrar.
+- Onboarding deve finalizar.
+- App deve redirecionar para Lançar.

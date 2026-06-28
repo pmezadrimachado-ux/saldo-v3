@@ -1,65 +1,99 @@
-import { DB_CONFIG } from '../config/db.config.js';
-import { createLogger } from '../core/logger.js';
-import { applyMigrations } from './db.migrations.js';
-import { DB_STORES } from './db.schema.js';
 import {
-  createInitialMetadata,
-  createInitialPreferences,
-  createInitialSettings,
-} from './db.seed.js';
-
-const logger = createLogger('IndexedDB');
+  DB_NAME,
+  DB_VERSION,
+  DB_SCHEMA,
+  DB_STORES,
+} from './db.schema.js';
 
 let databasePromise = null;
 
 export function openDatabase() {
-  if (databasePromise) {
-    return databasePromise;
-  }
+  if (databasePromise) return databasePromise;
 
   databasePromise = new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_CONFIG.name, DB_CONFIG.version);
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
 
     request.onupgradeneeded = () => {
-      applyMigrations(request.result, request.oldVersion, request.newVersion);
+      ensureSchema(request.result);
     };
 
-    request.onsuccess = async () => {
+    request.onsuccess = () => {
       const database = request.result;
 
-      database.onversionchange = () => {
+      if (!hasFullSchema(database)) {
         database.close();
-      };
-
-      await seedRequiredRecords(database);
-
-      logger.info('Banco aberto:', DB_CONFIG.name);
+        databasePromise = forceSchemaUpgrade();
+        databasePromise.then(resolve).catch(reject);
+        return;
+      }
 
       resolve(database);
     };
 
     request.onerror = () => {
+      databasePromise = null;
       reject(request.error);
     };
 
     request.onblocked = () => {
-      logger.warn('Abertura do banco bloqueada por outra aba.');
+      console.warn('Atualização do banco bloqueada por outra aba aberta.');
     };
   });
 
   return databasePromise;
 }
 
-export async function getAll(storeName) {
-  const database = await openDatabase();
-
+function forceSchemaUpgrade() {
   return new Promise((resolve, reject) => {
-    const transaction = database.transaction(storeName, 'readonly');
-    const store = transaction.objectStore(storeName);
-    const request = store.getAll();
+    const inspectRequest = indexedDB.open(DB_NAME);
 
-    request.onsuccess = () => resolve(request.result ?? []);
-    request.onerror = () => reject(request.error);
+    inspectRequest.onsuccess = () => {
+      const currentDatabase = inspectRequest.result;
+      const nextVersion = currentDatabase.version + 1;
+      currentDatabase.close();
+
+      const upgradeRequest = indexedDB.open(DB_NAME, nextVersion);
+
+      upgradeRequest.onupgradeneeded = () => {
+        ensureSchema(upgradeRequest.result);
+      };
+
+      upgradeRequest.onsuccess = () => resolve(upgradeRequest.result);
+
+      upgradeRequest.onerror = () => {
+        databasePromise = null;
+        reject(upgradeRequest.error);
+      };
+
+      upgradeRequest.onblocked = () => {
+        console.warn('Migração do banco bloqueada por outra aba aberta.');
+      };
+    };
+
+    inspectRequest.onerror = () => {
+      databasePromise = null;
+      reject(inspectRequest.error);
+    };
+  });
+}
+
+function hasFullSchema(database) {
+  return DB_SCHEMA.every((storeDefinition) => (
+    database.objectStoreNames.contains(storeDefinition.name)
+  ));
+}
+
+function ensureSchema(database) {
+  DB_SCHEMA.forEach((storeDefinition) => {
+    if (database.objectStoreNames.contains(storeDefinition.name)) return;
+
+    const store = database.createObjectStore(storeDefinition.name, {
+      keyPath: storeDefinition.keyPath,
+    });
+
+    (storeDefinition.indexes ?? []).forEach(([name, keyPath, options]) => {
+      store.createIndex(name, keyPath, options);
+    });
   });
 }
 
@@ -76,55 +110,15 @@ export async function getById(storeName, id) {
   });
 }
 
-export async function put(storeName, value) {
+export async function getAll(storeName) {
   const database = await openDatabase();
 
   return new Promise((resolve, reject) => {
-    const transaction = database.transaction(storeName, 'readwrite');
+    const transaction = database.transaction(storeName, 'readonly');
     const store = transaction.objectStore(storeName);
-    const request = store.put(value);
+    const request = store.getAll();
 
-    request.onsuccess = () => resolve(value);
-    request.onerror = () => reject(request.error);
-  });
-}
-
-export async function putMany(storeName, values = []) {
-  const database = await openDatabase();
-
-  return new Promise((resolve, reject) => {
-    const transaction = database.transaction(storeName, 'readwrite');
-    const store = transaction.objectStore(storeName);
-
-    values.forEach((value) => store.put(value));
-
-    transaction.oncomplete = () => resolve(values);
-    transaction.onerror = () => reject(transaction.error);
-  });
-}
-
-export async function remove(storeName, id) {
-  const database = await openDatabase();
-
-  return new Promise((resolve, reject) => {
-    const transaction = database.transaction(storeName, 'readwrite');
-    const store = transaction.objectStore(storeName);
-    const request = store.delete(id);
-
-    request.onsuccess = () => resolve(id);
-    request.onerror = () => reject(request.error);
-  });
-}
-
-export async function clearStore(storeName) {
-  const database = await openDatabase();
-
-  return new Promise((resolve, reject) => {
-    const transaction = database.transaction(storeName, 'readwrite');
-    const store = transaction.objectStore(storeName);
-    const request = store.clear();
-
-    request.onsuccess = () => resolve(storeName);
+    request.onsuccess = () => resolve(request.result ?? []);
     request.onerror = () => reject(request.error);
   });
 }
@@ -143,55 +137,68 @@ export async function getByIndex(storeName, indexName, value) {
   });
 }
 
+export async function put(storeName, record) {
+  const database = await openDatabase();
+
+  return new Promise((resolve, reject) => {
+    const transaction = database.transaction(storeName, 'readwrite');
+    const store = transaction.objectStore(storeName);
+    const request = store.put(record);
+
+    request.onsuccess = () => resolve(record);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+export async function remove(storeName, id) {
+  const database = await openDatabase();
+
+  return new Promise((resolve, reject) => {
+    const transaction = database.transaction(storeName, 'readwrite');
+    const store = transaction.objectStore(storeName);
+    const request = store.delete(id);
+
+    request.onsuccess = () => resolve(true);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+export async function clear(storeName) {
+  const database = await openDatabase();
+
+  return new Promise((resolve, reject) => {
+    const transaction = database.transaction(storeName, 'readwrite');
+    const store = transaction.objectStore(storeName);
+    const request = store.clear();
+
+    request.onsuccess = () => resolve(true);
+    request.onerror = () => reject(request.error);
+  });
+}
+
 export async function exportDatabaseSnapshot() {
+  const database = await openDatabase();
   const snapshot = {};
 
-  for (const storeName of Object.values(DB_STORES)) {
-    snapshot[storeName] = await getAll(storeName);
-  }
+  await Promise.all(DB_SCHEMA.map((storeDefinition) => new Promise((resolve, reject) => {
+    const transaction = database.transaction(storeDefinition.name, 'readonly');
+    const store = transaction.objectStore(storeDefinition.name);
+    const request = store.getAll();
+
+    request.onsuccess = () => {
+      snapshot[storeDefinition.name] = request.result ?? [];
+      resolve();
+    };
+
+    request.onerror = () => reject(request.error);
+  })));
 
   return snapshot;
 }
 
-async function seedRequiredRecords(database) {
-  const now = new Date().toISOString();
-
-  const seeds = [
-    [DB_STORES.SETTINGS, 'app_settings', createInitialSettings(now)],
-    [DB_STORES.PREFERENCES, 'user_preferences', createInitialPreferences(now)],
-    [DB_STORES.METADATA, 'app_metadata', createInitialMetadata(now)],
-  ];
-
-  await Promise.all(
-    seeds.map(([storeName, id, value]) => ensureRecord(database, storeName, id, value)),
-  );
-}
-
-function ensureRecord(database, storeName, id, value) {
-  return new Promise((resolve, reject) => {
-    const transaction = database.transaction(storeName, 'readwrite');
-    const store = transaction.objectStore(storeName);
-    const getRequest = store.get(id);
-
-    getRequest.onsuccess = () => {
-      if (getRequest.result) {
-        resolve(getRequest.result);
-        return;
-      }
-
-      const putRequest = store.put(value);
-
-      putRequest.onsuccess = () => resolve(value);
-      putRequest.onerror = () => reject(putRequest.error);
-    };
-
-    getRequest.onerror = () => reject(getRequest.error);
-  });
-}
-
 export async function replaceDatabaseSnapshot(snapshot) {
   const database = await openDatabase();
-  const storeNames = Object.keys(snapshot);
+  const storeNames = DB_SCHEMA.map((storeDefinition) => storeDefinition.name);
 
   return new Promise((resolve, reject) => {
     const transaction = database.transaction(storeNames, 'readwrite');
@@ -200,7 +207,7 @@ export async function replaceDatabaseSnapshot(snapshot) {
       const store = transaction.objectStore(storeName);
       store.clear();
 
-      snapshot[storeName].forEach((item) => {
+      (snapshot[storeName] ?? []).forEach((item) => {
         store.put(item);
       });
     });
@@ -209,3 +216,5 @@ export async function replaceDatabaseSnapshot(snapshot) {
     transaction.onerror = () => reject(transaction.error);
   });
 }
+
+export { DB_STORES };

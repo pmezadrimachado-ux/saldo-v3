@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 3.0.0-rc.7
+
+### Corrigido
+
+- Erro de IndexedDB com stores ausentes.
+- Migração defensiva do banco local.
+- Compatibilidade do adapter IndexedDB com repositories existentes.
+
+
 ## 3.0.0-rc.6
 
 ### Corrigido

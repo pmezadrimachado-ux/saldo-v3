@@ -1,3 +1,6 @@
+export const DB_NAME = 'saldoDB';
+export const DB_VERSION = 7;
+
 export const DB_STORES = {
   ACCOUNTS: 'accounts',
   CATEGORIES: 'categories',
@@ -8,6 +11,7 @@ export const DB_STORES = {
   SETTINGS: 'settings',
   PREFERENCES: 'preferences',
   METADATA: 'metadata',
+  RECURRENCES: 'recurrences',
 };
 
 export const DB_SCHEMA = [
@@ -91,5 +95,12 @@ export const DB_SCHEMA = [
     name: DB_STORES.METADATA,
     keyPath: 'id',
     indexes: [],
+  },
+  {
+    name: DB_STORES.RECURRENCES,
+    keyPath: 'id',
+    indexes: [
+      ['by_status', 'status', { unique: false }],
+    ],
   },
 ];
