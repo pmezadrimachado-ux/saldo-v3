@@ -1,20 +1,19 @@
-# Saldo v3.0.0 RC5
+# Saldo v3.0.0 RC6
 
 ## Objetivo
 
-Corrigir os P1 encontrados na auditoria técnica do RC4.
+Corrigir o bloqueio reportado no onboarding em ambiente real.
 
 ## Correções
 
-- Backup automático de segurança antes da importação.
-- Importação de backup tolerante a stores ausentes.
-- Parcelamentos com ajuste de centavos na última parcela.
-- weekKey das parcelas calculado no model.
+- Submit do onboarding reforçado.
+- Erro de onboarding agora é registrado no console.
+- Botão exibe estado de carregamento.
+- Campo de categoria de receita personalizada.
+- Redirecionamento para Lançar após configuração mantido.
 
 ## Critério de aprovação
 
-Executar `FINAL_RELEASE_CHECKLIST.md` em celular real.
-
-## Próxima versão
-
-Se aprovado: `3.0.0 Stable`.
+- Clicar em "Finalizar configuração" deve criar dados iniciais.
+- App deve redirecionar para `#/quick-add`.
+- Categoria de receita personalizada deve ser salva.

@@ -12,7 +12,7 @@ export function renderOnboardingPage() {
       <h2>Configure o Saldo</h2>
       <p>Escolha contas, cartões e categorias para começar. Seus dados ficam apenas neste dispositivo.</p>
 
-      <form class="onboarding-form" data-onboarding-form>
+      <form class="onboarding-form" data-onboarding-form novalidate>
         <section class="onboarding-step">
           <h3>1. Contas e cartões</h3>
           <p>Selecione sugestões ou adicione uma conta personalizada.</p>
@@ -50,14 +50,14 @@ export function renderOnboardingPage() {
 
           ${renderTextInput({
             name: 'customExpenseCategory',
-            label: 'Categoria personalizada opcional',
+            label: 'Categoria de despesa personalizada opcional',
             placeholder: 'Ex.: Academia, Pet, Delivery',
           })}
         </section>
 
         <section class="onboarding-step">
           <h3>3. Categorias de receita</h3>
-          <p>Selecione pelo menos uma categoria de receita.</p>
+          <p>Selecione pelo menos uma categoria de receita ou adicione uma personalizada.</p>
 
           <div class="choice-grid">
             ${SUGGESTED_INCOME_CATEGORIES.map((category, index) => `
@@ -68,11 +68,21 @@ export function renderOnboardingPage() {
               </label>
             `).join('')}
           </div>
+
+          ${renderTextInput({
+            name: 'customIncomeCategory',
+            label: 'Categoria de receita personalizada opcional',
+            placeholder: 'Ex.: Bônus, Comissão, Venda',
+          })}
         </section>
 
-        <button class="button button--primary button--lg" type="submit">
+        <button class="button button--primary button--lg" type="submit" data-onboarding-submit>
           Finalizar configuração
         </button>
+
+        <p class="form-help">
+          Se o botão não avançar, abra o console e envie o erro exibido. Nesta versão, erros também aparecem em aviso no app.
+        </p>
       </form>
     </section>
   `;

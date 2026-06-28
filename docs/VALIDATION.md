@@ -1,3 +1,3 @@
-# Validação — RC5 / Correções de Auditoria
+# Validação — RC6 / Correção de Onboarding
 
-Manifest, imports, exports, assets do Service Worker, sintaxe JS e correções P1 foram validados com sucesso.
+Manifest, imports, exports, assets do Service Worker, sintaxe JS e correção de onboarding foram validados com sucesso.

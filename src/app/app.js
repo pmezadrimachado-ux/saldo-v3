@@ -527,10 +527,19 @@ function bindCategoryActions(rootElement, state, render) {
 }
 
 function bindOnboardingForm(rootElement, state, router, render) {
-  rootElement.querySelector('[data-onboarding-form]')?.addEventListener('submit', async (event) => {
-    event.preventDefault();
+  const form = rootElement.querySelector('[data-onboarding-form]');
 
-    const form = event.currentTarget;
+  if (!form || form.dataset.bound === 'true') {
+    return;
+  }
+
+  form.dataset.bound = 'true';
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const submitButton = form.querySelector('[data-onboarding-submit]');
     const formData = new FormData(form);
 
     const accounts = formData.getAll('accounts').map((name) => ({
@@ -556,6 +565,7 @@ function bindOnboardingForm(rootElement, state, router, render) {
 
     const customAccount = String(formData.get('customAccount') ?? '').trim();
     const customExpenseCategory = String(formData.get('customExpenseCategory') ?? '').trim();
+    const customIncomeCategory = String(formData.get('customIncomeCategory') ?? '').trim();
 
     if (customAccount) {
       accounts.push({
@@ -574,7 +584,21 @@ function bindOnboardingForm(rootElement, state, router, render) {
       });
     }
 
+    if (customIncomeCategory) {
+      categories.push({
+        name: customIncomeCategory,
+        type: 'income',
+        color: '#5BC0FF',
+        sortOrder: 500,
+      });
+    }
+
     try {
+      if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.textContent = 'Configurando...';
+      }
+
       await completeOnboarding({
         accounts,
         categories,
@@ -590,9 +614,16 @@ function bindOnboardingForm(rootElement, state, router, render) {
 
       router.navigate(ROUTES.QUICK_ADD, { replace: true });
     } catch (error) {
+      console.error('Erro no onboarding:', error);
+
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = 'Finalizar configuração';
+      }
+
       showToast(state, render, {
         type: 'error',
-        message: error.message || 'Não foi possível concluir o onboarding.',
+        message: error.message || 'Não foi possível concluir a configuração.',
       });
     }
   });

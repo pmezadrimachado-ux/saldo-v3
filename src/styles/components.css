@@ -1406,3 +1406,16 @@
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
 }
+
+
+.button:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+.form-help {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-normal);
+}

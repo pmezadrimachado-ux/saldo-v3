@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## 3.0.0-rc.6
+
+### Corrigido
+
+- Onboarding não avançando após clicar em Finalizar configuração.
+- Tratamento de erro no onboarding.
+- Estado de carregamento no botão de configuração.
+
+### Adicionado
+
+- Categoria de receita personalizada no onboarding.
+
+
 ## 3.0.0-rc.5
 
 ### Corrigido
