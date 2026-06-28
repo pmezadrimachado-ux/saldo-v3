@@ -1,3 +1,3 @@
-# Validação — RC14 / Refatoração controlada
+# Validação — RC16 / Logo Mercado Pago
 
-Manifest, imports, exports, Service Worker, sintaxe JS, gráficos e seletor visual foram validados com sucesso.
+Manifest, imports, exports, Service Worker, sintaxe JS e logo Mercado Pago foram validados com sucesso.

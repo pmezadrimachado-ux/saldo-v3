@@ -1,5 +1,22 @@
 # CHANGELOG
 
+## 3.0.0-rc.16
+
+### Adicionado
+
+- Logo do Mercado Pago ao sistema de logos bancárias.
+
+
+## 3.0.0-rc.15
+
+### Adicionado
+
+- Logos locais de bancos e cartões de benefício.
+- Registry de logos com aliases.
+- Componente reutilizável de logo bancária.
+- Integração de logos no seletor visual de contas.
+
+
 ## 3.0.0-rc.14
 
 ### Adicionado

@@ -1,24 +1,18 @@
-# Saldo v3.0.0 RC14
+# Saldo v3.0.0 RC16
 
 ## Objetivo
 
-Refatoração controlada após o RC13 quebrar a aplicação com erro de sintaxe.
-
-## Base usada
-
-RC12.
+Adicionar a logo do Mercado Pago ao sistema local de logos bancárias.
 
 ## Alterações
 
-- Valores em R$ no gráfico de gastos por dia da semana.
-- Valores em R$ no gráfico de últimos meses.
-- Total da semana.
-- Total de despesas do período.
-- Seletor visual de conta/cartão no lançamento completo.
-- Select mantido como fallback.
+- Adicionado `assets/banks/mercado-pago.jpeg`.
+- Atualizado `src/config/bank-logo.registry.js`.
+- Atualizado Service Worker para cache offline.
+- Atualizada documentação de release.
 
-## Validação
+## Critério de aprovação
 
-- Sintaxe JS validada com `node --check`.
-- Imports e exports validados.
-- Assets do Service Worker validados.
+- Criar conta chamada Mercado Pago deve exibir a logo correta.
+- Criar conta chamada mercadopago ou MP também deve reconhecer a logo.
+- Logo deve funcionar offline após cache.
