@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## 3.0.0-rc.17
+
+### Corrigido
+
+- Popups/toasts causavam re-render e zeravam formulários.
+- Toast agora é renderizado em host isolado no DOM.
+
+### Adicionado
+
+- Componente `toast-host.component.js`.
+
+
 ## 3.0.0-rc.16
 
 ### Adicionado

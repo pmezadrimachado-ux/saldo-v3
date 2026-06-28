@@ -13,6 +13,7 @@ import {
   setToast,
 } from '../core/state.js';
 import { parseCurrencyInput } from '../utils/currency.js';
+import { showDomToast, clearDomToast } from '../ui/components/toast-host.component.js';
 import { uniqueAccounts, uniqueCategories } from '../utils/dedupe.js';
 import { addBudget } from '../services/budget.service.js';
 import { addGoal, archiveGoal, reactivateGoal, updateGoal } from '../services/goal.service.js';
@@ -85,7 +86,7 @@ export async function initializeApp() {
   eventBus.on(EVENT_NAMES.TOAST_CLEAR, () => {
     clearToastTimer(state);
     setToast(state, null);
-    render();
+    clearDomToast();
   });
 
   window.addEventListener('online', () => {
@@ -809,15 +810,14 @@ function getCategoryColor(index) {
 function showToast(state, render, toast) {
   clearToastTimer(state);
   setToast(state, toast);
-  render();
 
-  if (!toast || toast.type === 'error') {
+  if (!toast) {
+    clearDomToast();
     return;
   }
 
-  state.ui.toastTimer = window.setTimeout(() => {
-    setToast(state, null);
-    state.ui.toastTimer = null;
-    render();
-  }, 2000);
+  showDomToast({
+    type: toast.type,
+    message: toast.message,
+  });
 }

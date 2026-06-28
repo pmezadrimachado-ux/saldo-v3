@@ -1,3 +1,3 @@
-# Validação — RC16 / Logo Mercado Pago
+# Validação — RC17 / Toast sem re-render
 
-Manifest, imports, exports, Service Worker, sintaxe JS e logo Mercado Pago foram validados com sucesso.
+Manifest, imports, exports, Service Worker, sintaxe JS e isolamento do toast foram validados com sucesso.
